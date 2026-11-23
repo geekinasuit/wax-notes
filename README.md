@@ -5,7 +5,8 @@ Notes are end-to-end encrypted, work offline, and sync conflict-free over any No
 note can be shared with specific people or AI agents, each at a role (editor, appender, suggester,
 reader), without relays learning who shares with whom. Android first, then desktop, then iOS.
 
-Status: early. No app code yet; the repo holds the design and the first milestone's plan.
+Status: early. There is no app yet; the repo holds the design, the plan and a Bazel skeleton
+(`bazel test //...`).
 
 - Design: [docs/design-brief.md](docs/design-brief.md)
 - Roadmap and decisions: [thoughts/shared/plans/2026-11-22-roadmap.md](thoughts/shared/plans/2026-11-22-roadmap.md)

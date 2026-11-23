@@ -21,7 +21,8 @@ brief=founding design; read before design work; cite by section("brief §6.3"); 
 roadmap=build strategy, milestones, decision register(D-n), open questions(O-n), risks(R-n)
 
 §BUILD
-Bazel bzlmod only(no WORKSPACE, no Gradle); NOT YET PRESENT: #2 adds module+first shared module+CI; then `bazel test //...`=green gate
+Bazel bzlmod only(no WORKSPACE, no Gradle); `bazel test //...`=green gate, locally+CI(.github/workflows/ci.yml)
+declare EVERY shared module w/ kmp_module(bazel/kmp/kmp.bzl)→library + 1 target running every test class in commonTest(any file name; fails if none) + guard scanning commonMain for platform references
 KMP discipline(roadmap "Build strategy"):
   shared code: shared/<module>/src/commonMain/kotlin; tests src/commonTest/kotlin
   commonMain uses no java.*|javax.*|android.* API, incl. implicit java.lang(System, Thread)

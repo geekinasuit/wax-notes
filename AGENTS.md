@@ -43,8 +43,11 @@ chosen role. Android first, then desktop (JVM), then iOS.
 
 ## Build and test
 
-- **Bazel, bzlmod only** (no `WORKSPACE`, no Gradle). Not yet present: #2 adds the module,
-  the first shared module, and CI. Once it lands, `bazel test //...` is the green gate.
+- **Bazel, bzlmod only** (no `WORKSPACE`, no Gradle). `bazel test //...` is the green gate,
+  locally and in CI (`.github/workflows/ci.yml`).
+- **Declare every shared module with `kmp_module`** (`bazel/kmp/kmp.bzl`). It makes the library,
+  one target that runs every test class in commonTest (whatever its file's name; it fails if there
+  are none), and the guard that scans commonMain for platform references.
 - **KMP discipline** (roadmap, "Build strategy"): shared code lives in
   `shared/<module>/src/commonMain/kotlin` with tests in `src/commonTest/kotlin`; commonMain
   uses no `java.*`, `javax.*` or `android.*` API, including implicit `java.lang` (`System`,

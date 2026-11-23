@@ -1,0 +1,4 @@
+load("//bazel/kmp:kmp.bzl", "kmp_module")
+
+# Note types, ids and roles: pure Kotlin, the base of the dependency graph.
+kmp_module(name = "model")
