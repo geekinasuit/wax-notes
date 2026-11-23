@@ -26,10 +26,22 @@ kt_jvm_library(
 )
 
 kt_jvm_library(
+    name = "fixture_contracts",
+    testonly = True,
+    srcs = ["fixtures/Contracts.kt"],
+    deps = [
+        "@maven//:junit_junit",
+        "@rules_kotlin//kotlin/compiler:kotlin-test",
+        "@rules_kotlin//kotlin/compiler:kotlin-test-junit",
+    ],
+)
+
+kt_jvm_library(
     name = "fixtures",
     testonly = True,
     srcs = ["fixtures/Samples.kt"],
     deps = [
+        ":fixture_contracts",
         "@maven//:junit_junit",
         "@rules_kotlin//kotlin/compiler:kotlin-test",
         "@rules_kotlin//kotlin/compiler:kotlin-test-junit",
@@ -40,7 +52,7 @@ kt_jvm_test(
     name = "test_classes_test",
     size = "small",
     srcs = ["TestClassesTest.kt"],
-    env = {"FIXTURES_JAR": package_name() + "/fixtures.jar"},
+    env = {"KMP_COMMON_TEST_JAR": package_name() + "/fixtures.jar"},
     test_class = "com.geekinasuit.waxnotes.build.TestClassesTest",
     runtime_deps = [":fixtures"],
     deps = [

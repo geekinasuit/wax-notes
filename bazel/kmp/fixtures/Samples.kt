@@ -32,13 +32,29 @@ object Singleton {
   @Test fun cannotRun() {}
 }
 
-interface HasTestBody {
-  @Test fun cannotRun() {}
+// Tests in an interface aren't supported, whether or not a class implements it.
+
+interface TestInInterface {
+  @Test fun inInterface() {}
 }
 
-class HasItsOwnTestToo : HasTestBody {
+class ImplementsTestInInterface : TestInInterface {
   @Test fun runs() {}
 }
+
+class ImplementsContractInAnotherJar : ContractInAnotherJar {
+  override fun declaredInAnotherJar() {}
+}
+
+class ImplementsIgnoredContract : IgnoredContract {
+  override fun declaredInAnIgnoredContract() {}
+}
+
+class ImplementsContractRunAsAnEmptySuite : ContractRunAsAnEmptySuite {
+  override fun declaredInAContractRunAsAnEmptySuite() {}
+}
+
+class ExtendsABaseInAnotherJar : BaseInAnotherJar()
 
 // Not a test class: here @Test is only in a comment and a string.
 class NotATest {
