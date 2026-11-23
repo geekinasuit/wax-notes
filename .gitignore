@@ -1,0 +1,30 @@
+# Bazel output symlinks live at the workspace root; anchored so real files named bazel-* survive.
+/bazel-*
+user.bazelrc
+.ijwb
+.aswb
+.bazelbsp
+.idea
+
+# Rust (agent SDK, possibly a CRDT core)
+/target/
+
+# OS / editor
+.DS_Store
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+keystore.properties
+*.age.key
+.gh_token*
+*.nsec
+
+# Keep project docs tracked (a user-level ignore may exclude these names)
+!thoughts
+!AGENTS.md
+!AGENTS.compressed.md
+!CLAUDE.md
