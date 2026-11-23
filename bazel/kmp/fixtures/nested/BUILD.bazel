@@ -1,0 +1,15 @@
+load("//bazel/kmp:kmp.bzl", "module_sources")
+
+# Checks, when this package loads, that the function kmp_module gets its sources from reports the
+# BUILD files below src. str hands back the error's message.
+_ERROR = module_sources(
+    "nested",
+    on_error = str,
+)
+
+_EXPECTED = "nested: BUILD files in or below src hide sources or tests: " + ", ".join([
+    "src/commonMain/kotlin/sub",
+    "src/commonTest/kotlin/sub",
+])
+
+(_ERROR == _EXPECTED) or fail("module_sources returned: %s" % _ERROR)
