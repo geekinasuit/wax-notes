@@ -1,0 +1,27 @@
+module(
+    name = "wax_notes",
+    version = "0.0.1",
+)
+
+# Same Bazel and rules_kotlin pins as geekinasuit/cribkeeper. The roadmap (D-12) records why this
+# line rather than vellum's.
+bazel_dep(name = "rules_kotlin", version = "2.4.20")
+bazel_dep(name = "rules_jvm_external", version = "6.10")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+maven.install(
+    artifacts = [
+        # The runner kotlin.test binds to on the JVM. kotlin.test itself comes from rules_kotlin, so
+        # it always matches the compiler.
+        "junit:junit:4.13.2",
+    ],
+    # Resolved versions and checksums. After changing artifacts, regenerate it with
+    # `REPIN=1 bazel run @maven//:pin`.
+    lock_file = "//:maven_install.json",
+    # Google's mirror of Maven Central first; Central itself rate-limits bursty resolves.
+    repositories = [
+        "https://maven-central.storage-download.googleapis.com/maven2",
+        "https://repo1.maven.org/maven2",
+    ],
+)
+use_repo(maven, "maven")

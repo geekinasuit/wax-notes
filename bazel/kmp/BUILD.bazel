@@ -1,0 +1,65 @@
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library", "kt_jvm_test")
+
+# The commonMain guard, run against each shared module by kmp_module (kmp.bzl).
+kt_jvm_library(
+    name = "guard",
+    testonly = True,
+    srcs = [
+        "CommonMainGuardTest.kt",
+        "PlatformReferences.kt",
+    ],
+    visibility = ["//shared:__subpackages__"],
+    deps = [
+        "@maven//:junit_junit",
+        "@rules_kotlin//kotlin/compiler:kotlin-test",
+        "@rules_kotlin//kotlin/compiler:kotlin-test-junit",
+    ],
+)
+
+# The runner for a shared module's commonTest classes, used by kmp_module (kmp.bzl).
+kt_jvm_library(
+    name = "common_tests",
+    testonly = True,
+    srcs = ["CommonTests.kt"],
+    visibility = ["//shared:__subpackages__"],
+    deps = ["@maven//:junit_junit"],
+)
+
+kt_jvm_library(
+    name = "fixtures",
+    testonly = True,
+    srcs = ["fixtures/Samples.kt"],
+    deps = [
+        "@maven//:junit_junit",
+        "@rules_kotlin//kotlin/compiler:kotlin-test",
+        "@rules_kotlin//kotlin/compiler:kotlin-test-junit",
+    ],
+)
+
+kt_jvm_test(
+    name = "test_classes_test",
+    size = "small",
+    srcs = ["TestClassesTest.kt"],
+    env = {"FIXTURES_JAR": package_name() + "/fixtures.jar"},
+    test_class = "com.geekinasuit.waxnotes.build.TestClassesTest",
+    runtime_deps = [":fixtures"],
+    deps = [
+        ":common_tests",
+        "@maven//:junit_junit",
+        "@rules_kotlin//kotlin/compiler:kotlin-test",
+        "@rules_kotlin//kotlin/compiler:kotlin-test-junit",
+    ],
+)
+
+kt_jvm_test(
+    name = "platform_references_test",
+    size = "small",
+    srcs = ["PlatformReferencesTest.kt"],
+    test_class = "com.geekinasuit.waxnotes.build.PlatformReferencesTest",
+    deps = [
+        ":guard",
+        "@maven//:junit_junit",
+        "@rules_kotlin//kotlin/compiler:kotlin-test",
+        "@rules_kotlin//kotlin/compiler:kotlin-test-junit",
+    ],
+)

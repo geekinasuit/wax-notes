@@ -1,0 +1,69 @@
+"""Bazel macro for a KMP-disciplined shared module."""
+
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library", "kt_jvm_test")
+
+_MAIN = "src/commonMain/kotlin/"
+_TEST = "src/commonTest/kotlin/"
+
+def kmp_module(name, deps = [], test_deps = [], visibility = ["//visibility:public"]):
+    """A shared module compiled for the JVM from its commonMain sources only.
+
+    Declares:
+      <name>                      the library
+      <name>_common_test          runs every test class in commonTest; fails if there is none
+      <name>_common_main_guard    fails if commonMain references the JVM or Android platform
+
+    Args:
+      name: the library's name.
+      deps: library dependencies. Each must also publish Kotlin Multiplatform artifacts with iOS,
+          which nothing here checks.
+      test_deps: extra dependencies of the commonTest sources.
+      visibility: the library's visibility.
+    """
+    main_srcs = native.glob([_MAIN + "**/*.kt"])
+    test_srcs = native.glob([_TEST + "**/*.kt"])
+    if not test_srcs:
+        fail("%s: no tests under %s" % (name, _TEST))
+
+    kt_jvm_library(
+        name = name,
+        srcs = main_srcs,
+        visibility = visibility,
+        deps = deps,
+    )
+
+    kt_jvm_library(
+        name = name + "_common_test_lib",
+        testonly = True,
+        srcs = test_srcs,
+        visibility = ["//visibility:private"],
+        deps = [
+            ":" + name,
+            "@maven//:junit_junit",
+            "@rules_kotlin//kotlin/compiler:kotlin-test",
+            "@rules_kotlin//kotlin/compiler:kotlin-test-junit",
+        ] + deps + test_deps,
+    )
+
+    kt_jvm_test(
+        name = name + "_common_test",
+        env = {
+            "KMP_COMMON_TEST_JAR": "%s/%s_common_test_lib.jar" % (native.package_name(), name),
+        },
+        test_class = "com.geekinasuit.waxnotes.build.CommonTests",
+        runtime_deps = [
+            ":%s_common_test_lib" % name,
+            "//bazel/kmp:common_tests",
+        ],
+    )
+
+    kt_jvm_test(
+        name = name + "_common_main_guard",
+        size = "small",
+        data = main_srcs,
+        env = {
+            "KMP_COMMON_MAIN": ",".join(["%s/%s" % (native.package_name(), src) for src in main_srcs]),
+        },
+        test_class = "com.geekinasuit.waxnotes.build.CommonMainGuardTest",
+        runtime_deps = ["//bazel/kmp:guard"],
+    )

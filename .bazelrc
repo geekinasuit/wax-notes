@@ -1,0 +1,8 @@
+# Pin the JVM that builds and runs tests, so neither the host's JDK nor CI's leaks in.
+common --java_runtime_version=remotejdk_21
+common --tool_java_runtime_version=remotejdk_21
+
+test --test_output=errors
+
+# Per-user local overrides (gitignored). An absent file is fine.
+try-import %workspace%/user.bazelrc
